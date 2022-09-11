@@ -41,32 +41,33 @@ switch ($bdc_language){
         break;
 }
 
-function createBacklink($arr) {
+function bdc_createBacklink($arr) {
     global $bdc_words;
     if(array_key_exists('url', $arr) AND array_key_exists($bdc_words['keyword'], $arr)){
-        $link = '<a href="' . $arr['url'] . '" ';
+        $link = '<a href="' . esc_url($arr['url']) . '" ';
 
         if(array_key_exists('target', $arr)){
-            $link .= 'target="' . $arr['target'] . '" ';
+            $link .= 'target="' . esc_attr($arr['target']) . '" ';
         }
 
         if(array_key_exists('title', $arr)){
-            $link .= 'title="' . $arr['title'] . '" ';
+            $link .= 'title="' . esc_attr($arr['title']) . '" ';
         }
 
         if(array_key_exists('rel', $arr)){
-            $link .= 'rel="' . $arr['rel'] . '" ';
+            $link .= 'rel="' . esc_attr($arr['rel']) . '" ';
         }
 
         if(array_key_exists('id', $arr)){
-            $link .= 'id="' . $arr['id'] . '" ';
+            $link .= 'id="' . esc_attr($arr['id']) . '" ';
         }
 
         if(array_key_exists('class', $arr)){
-            $link .= 'class="' . $arr['class'] . '" ';
+            $link .= 'class="' . esc_attr($arr['class']) . '" ';
         }
 
-        $link .= '>' . $arr[$bdc_words['keyword']] . '</a>';
+        $link .= '>' . esc_html($arr[$bdc_words['keyword']]) . '</a>';
+
     }
 
     if ( current_user_can('manage_options') ) {
@@ -113,8 +114,8 @@ function createBacklink($arr) {
         $keys = '<div class="bdc_keys">';
         $values = '<div class="bdc_values">';
         foreach($arr as $key => $value){
-            $keys .= "<div>" . $key . ":</div>";
-            $values .= "<div>" . $value . "</div>";
+            $keys .= "<div>" . esc_html($key) . ":</div>";
+            $values .= "<div>" . esc_html($value) . "</div>";
         }
         $keys .= '</div>';
         $values .= '</div>';
@@ -146,17 +147,17 @@ function createBacklink($arr) {
     }
 }
 
-add_shortcode('link', 'createBacklink');
+add_shortcode('link', 'bdc_createBacklink');
 
-add_action( 'admin_menu', 'custom_options_page' );
+add_action( 'admin_menu', 'bdc_options_page' );
 
-function custom_options_page() {
+function bdc_options_page() {
 
     add_options_page(
         'Backlink Day Counter Settings', // page title
         'Backlink Day Counter Settings', // menu title
         'manage_options', // capability to access the page
-        'bdc-settings-page-slug', // menu slug
+        'bdc-settings', // menu slug
         'bdc_settings_page_content', // callback function
         5 // position
     );
@@ -170,7 +171,7 @@ function bdc_settings_page_content() {
         <form method="post" action="options.php">
             <?php
             settings_fields( 'bdc_group' ); // settings group name
-            do_settings_sections( 'bdc-settings-page-slug' ); // a page slug
+            do_settings_sections( 'bdc-settings' ); // a page slug
             submit_button();
             ?>
         </form>
@@ -186,7 +187,7 @@ function bdc_register_settings() {
         'homepage_section', // section ID
         '', // title
         '', // callback function
-        'bdc-settings-page-slug' // page slug
+        'bdc-settings' // page slug
     );
 
     // first field
@@ -194,7 +195,7 @@ function bdc_register_settings() {
         'bdc_lang_option',
         'Language',
         'bdc_lang_option_field_html', // function which prints the field
-        'bdc-settings-page-slug', // page slug
+        'bdc-settings', // page slug
         'homepage_section', // section ID
         array(
             'label_for' => 'bdc_lang_option',
@@ -232,7 +233,7 @@ function bdc_settings_link( $links ) {
     // Build and escape the URL.
     $url = esc_url( add_query_arg(
         'page',
-        'bdc-settings-page-slug',
+        'bdc-settings',
         get_admin_url() . 'options-general.php'
     ) );
     // Create the link.
