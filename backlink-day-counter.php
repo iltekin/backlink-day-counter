@@ -223,7 +223,7 @@ function bdc_lang_option_field_html() {
     foreach($lang_options as $lo){
         echo '<option';
         if($lo['code'] == $bdc_lang_option){ echo ' selected'; }
-        echo ' value="' . $lo['code'] . '">' . $lo['title'] . '</option>';
+        echo ' value="' . esc_html($lo['code']) . '">' . esc_html($lo['title']) . '</option>';
     }
     echo '</select>';
 }
